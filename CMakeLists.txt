@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.5)
+project (jehova)
+
+set (CMAKE_CXX_STANDARD 11)
+
+INCLUDE(FindPkgConfig)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf>=2.0.0)
+
+include_directories( 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/ 
+	${SDL2_INCLUDE_DIRS} 
+	${SDL2IMAGE_INCLUDE_DIRS}
+	${SDL2TTF_INCLUDE_DIRS}
+)
+
+FILE(GLOB jehova_CPP 
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+)
+
+add_executable(jehova ${jehova_CPP})
+TARGET_LINK_LIBRARIES(jehova 
+	${SDL2_LIBRARIES} 
+	${SDL2IMAGE_LIBRARIES}
+	${SDL2TTF_LIBRARIES}
+)
