@@ -68,7 +68,11 @@ void Canvas::tick(){
     }
     this->pixels.clear();
     SDL_RenderPresent(ren);
-    SDL_Delay(42);
+
+    Uint32 frameTime = SDL_GetTicks();
+    if(frameTime < DELAY_TIME){
+        SDL_Delay((int)(DELAY_TIME - frameTime));
+    }
 }
 
 void Canvas::insert(Pixel pixel){
@@ -77,4 +81,8 @@ void Canvas::insert(Pixel pixel){
 
 void Canvas::insert(int x, int y, int r, int g, int b){
     this->insert(Pixel(x,y,r,g,b));
+}
+
+void Canvas::markStart(){
+    this->frameStart = SDL_GetTicks();
 }

@@ -7,6 +7,7 @@ int main(int argc, char*argv[]){
     Network *network = new Network();
 
     while( !canvas->quit() ){
+       canvas->markStart();
        network->tick(canvas);
        canvas->tick();
     }

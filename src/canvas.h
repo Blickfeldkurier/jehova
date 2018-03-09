@@ -37,6 +37,10 @@ class Canvas
 {
 private:
 
+   const int FPS=60;
+   const int DELAY_TIME = 1000.0f/FPS;
+   Uint32 frameStart;
+
    SDL_Window *win;
    SDL_Renderer *ren;
    std::list<Pixel> pixels;
@@ -49,6 +53,7 @@ private:
 public:
     Canvas();
     ~Canvas();
+    void markStart();
     void tick();
     bool quit();
     void insert(int x, int y, int r, int g, int b);
