@@ -1,10 +1,7 @@
 #include "network.h"
 
 void Network::init(){
-    opt = 1;
-    for(int i=0; i < NUM_CLIENTS; i++){
-        this->clientSocket[i] = 0;
-    }
+    int opt = 1;
 
     if( (listenSocket = socket(AF_INET, SOCK_STREAM, 0)) == 0){
         perror("socket failed");
@@ -33,8 +30,6 @@ void Network::init(){
         exit(EXIT_FAILURE);
     }
     addrlen = sizeof(address);
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
 }
 
 Network::Network(int port)
@@ -81,7 +76,7 @@ void Network::tick(Canvas *canvas){
     maxSd = listenSocket;
 
     //add child sockets to set
-    for (int i = 0 ; i < NUM_CLIENTS ; i++){
+    for (unsigned int i = 0 ; i < clientSocket.size() ; i++){
         //socket descriptor
         sd = clientSocket[i];
 
@@ -98,7 +93,10 @@ void Network::tick(Canvas *canvas){
     }
 
     //wait for an activity on one of the sockets
-    activity = select( maxSd + 1 , &readfds , NULL , NULL , &this->timeout);
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
+    activity = select( maxSd + 1 , &readfds , NULL , NULL , &timeout);
 
     if ((activity < 0) && (errno!=EINTR))
     {
@@ -115,28 +113,22 @@ void Network::tick(Canvas *canvas){
         //printf("New connection , socket fd is %d , ip is : %s , port : %d \n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
         //send(new_socket, message, strlen(message), 0) != strlen(message)
 
-        //add new socket to array of sockets
-        for (int i = 0; i < NUM_CLIENTS; i++){
-             //if position is empty
-            if( clientSocket[i] == 0 ){
-                clientSocket[i] = newSocket;
-                break;
-            }
-        }
+        clientSocket.push_back(newSocket);
     }
 
     //else its some IO operation on some other socket :)
-    for (int i = 0; i < NUM_CLIENTS; i++){
+    for (unsigned int i = 0; i < clientSocket.size(); i++){
         sd = clientSocket[i];
         if (FD_ISSET( sd , &readfds)){
             //Check if it was for closing , and also read the incoming message
+            char buffer[1025];
             if ((valread = read( sd , buffer, 1024)) == 0){
                 //Somebody disconnected , get his details
                 //getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&addrlen);
 
                 //Close the socket and mark as 0 in list for reuse
                 close( sd );
-                clientSocket[i] = 0;
+                clientSocket.erase(clientSocket.begin() + i);
             }else{ //Process message
                 //example: send(sd , buffer , strlen(buffer) , 0 );
                 this->processMsg(std::string(buffer), canvas);

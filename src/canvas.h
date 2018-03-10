@@ -37,8 +37,8 @@ class Canvas
 {
 private:
 
-   const int FPS=60;
-   const int DELAY_TIME = 1000.0f/FPS;
+   const unsigned int FPS=60;
+   const unsigned int DELAY_TIME = 1000.0f/FPS;
    Uint32 frameStart;
 
    SDL_Window *win;
