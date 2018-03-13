@@ -15,6 +15,8 @@ void printHelp(){
         "\t--help, -h\t\tShow this help\n" <<
         "\t--height/-y\t\tSet Window height\n\t\t\t(Default: 768 for Windowed, nvative for Fullscreen)\n" <<
         "\t--port, -p\t\tSet Listen Port (Default: 2342)\n" <<
+        "\t--save-path, -c\t\tPath to save Screenshots to (Default: empty)\n" <<
+        "\t--save-interval, -d\t\tScreenshot capture interval (Default: 600)\n" <<
         "\t--start-image, -s\t\tPath to start Image Path (Default: empty)\n" <<
         "\t--title, -t\t\tSet Window title and OSD Text\n" <<
         "\t--width, -x\t\tSet Window width\n\t\t\t(Default: 1024 for Windowed, native for Fullscreen)\n";
@@ -33,9 +35,13 @@ int main(int argc, char*argv[]){
     opts.screenHeight = 0;
     opts.screenWidth = 0;
     opts.startImagePath = "";
+    opts.screenInterval = 600;
+    opts.screenPath = "";
 
     static struct option long_options[] ={
         {"help", no_argument, nullptr, 'h'},
+        {"save-path", required_argument, nullptr, 'c'},
+        {"save-interval", required_argument, nullptr, 'd'},
         {"borderless-window", no_argument, nullptr, 'b'},
         {"fullscreen", no_argument, nullptr, 'f'},
         {"port", required_argument, nullptr, 'p'},
@@ -46,10 +52,16 @@ int main(int argc, char*argv[]){
         {0,0, 0, 0}
     };
 
-    while((opt = getopt_long(argc, argv, "bfhp:s:t:x:y:", long_options, &option_index)) != -1){
+    while((opt = getopt_long(argc, argv, "bc:d:fhp:s:t:x:y:", long_options, &option_index)) != -1){
       switch(opt){
         case 'b':{
             opts.screenOpts = opts.screenOpts || SDL_WINDOW_BORDERLESS;
+        }break;
+        case 'c':{
+            opts.screenPath = std::string(optarg);
+        }break;
+        case 'd':{
+            opts.screenInterval = atoi(optarg);
         }break;
         case 'f':{
             isFullscreen = true;

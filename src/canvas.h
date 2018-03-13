@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <list>
+#include <chrono>
 
 class Pixel{
 public:
@@ -44,6 +45,8 @@ public:
     std::string title;
     std::string port;
     std::string startImagePath;
+    std::string screenPath;
+    int screenInterval;
 };
 
 class Canvas
@@ -56,7 +59,11 @@ private:
 
    SDL_Window *win;
    SDL_Renderer *ren;
+   SDL_TimerID screenTimer;
    std::list<Pixel> pixels;
+   int winHeight;
+   int winWidth;
+   std::string screenPath;
 
    int init(COpts opts);
    void cleanup();
@@ -72,6 +79,7 @@ public:
     void insert(int x, int y, int r, int g, int b);
     void insert(int x, int y, int r, int g, int b, int a);
     void insert(Pixel pixel);
+    void takeScreenshot();
 };
 
 #endif // CANVAS_H

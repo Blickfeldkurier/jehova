@@ -1,28 +1,36 @@
 #include "canvas.h"
 
+Uint32 screenshotCallback(Uint32 interval, void *param){
+    if(param != nullptr){
+        Canvas *canvas = (Canvas*)param;
+        canvas->takeScreenshot();
+    }
+    return interval;
+}
+
 int Canvas::init(COpts opts){
     this->win = nullptr;
     this->ren = nullptr;
     this->quitHappend = false;
 
-    int localX = opts.screenWidth;
-    int localY = opts.screenHeight;
+    this->winWidth = opts.screenWidth;
+    this->winHeight = opts.screenHeight;
 
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
+    if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS ) < 0 ){
         std::cout << "SDL could not initialize! SDL_Error:\n\t" << SDL_GetError() << std::endl;
         return -1;
     }else{
         //If no resolition is given at command line, we use the native one in Fullscreen mode
-        if(localY == -1){
+        if(this->winHeight == -1){
             SDL_DisplayMode DM;
             if(SDL_GetDesktopDisplayMode(0,&DM) == 0){
                 std::cout << "" << DM.w << "/" << DM.h << "\n";
-                localX = DM.w;
-                localY = DM.h;
+                this->winWidth = DM.w;
+                this->winWidth = DM.h;
             }
         }
 
-        win = SDL_CreateWindow(opts.title.c_str(), 100, 100, localX, localY, opts.screenOpts);
+        win = SDL_CreateWindow(opts.title.c_str(), 100, 100, this->winWidth, this->winHeight, opts.screenOpts);
         if( win == nullptr ){
             std::cout << "Window could not Created:\n\t" << SDL_GetError() << std::endl;
             return -1;
@@ -57,6 +65,12 @@ int Canvas::init(COpts opts){
     }
     if(image != nullptr){
         SDL_FreeSurface(image);
+    }
+
+    this->screenPath = "";
+    if(opts.screenPath.empty() == false){
+        this->screenPath = opts.screenPath;
+        this->screenTimer = SDL_AddTimer(opts.screenInterval,screenshotCallback, this);
     }
     return 0;
 }
@@ -121,4 +135,19 @@ void Canvas::insert(int x, int y, int r, int g, int b, int a){
 
 void Canvas::markStart(){
     this->frameStart = SDL_GetTicks();
+}
+
+void Canvas::takeScreenshot(){
+    if(this->screenPath.empty()){
+        return;
+    }
+    const auto now     = std::chrono::system_clock::now();
+    const auto epoch   = now.time_since_epoch();
+    const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(epoch);
+
+    std::string path = this->screenPath + "jehova_" + std::to_string(seconds.count()) +".png";
+    SDL_Surface *sshot = SDL_CreateRGBSurface(0, this->winWidth, this->winHeight, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    SDL_RenderReadPixels(ren, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
+    IMG_SavePNG(sshot, path.c_str());
+    SDL_FreeSurface(sshot);
 }
