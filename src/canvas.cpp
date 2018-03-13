@@ -42,12 +42,22 @@ int Canvas::init(COpts opts){
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
     SDL_RenderClear(ren);
 
+    SDL_Texture * texture =nullptr;
+    SDL_Surface * image = nullptr;
+
     if(opts.startImagePath.empty() == false){
            SDL_Surface * image = IMG_Load(opts.startImagePath.c_str());
            SDL_Texture * texture = SDL_CreateTextureFromSurface(ren, image);
            SDL_RenderCopy(ren, texture, NULL, NULL);
     }
     SDL_RenderPresent(ren);
+
+    if(texture != nullptr){
+        SDL_DestroyTexture(texture);
+    }
+    if(image != nullptr){
+        SDL_FreeSurface(image);
+    }
     return 0;
 }
 
