@@ -16,14 +16,16 @@ public:
       this->r = 0;
       this->g = 0;
       this->b = 0;
+      this->a = 255;
     }
 
-    Pixel(int x, int y, int r, int g, int b){
+    Pixel(int x, int y, int r, int g, int b, int a=255){
         this->x = x;
         this->y = y;
         this->r = r;
         this->g = g;
         this->b = b;
+        this->a = a;
     }
 
     int x;
@@ -31,6 +33,7 @@ public:
     int r;
     int g;
     int b;
+    int a;
 };
 
 class COpts{
@@ -40,6 +43,7 @@ public:
     Uint32 screenOpts;
     std::string title;
     std::string port;
+    std::string startImagePath;
 };
 
 class Canvas
@@ -66,6 +70,7 @@ public:
     void tick();
     bool quit();
     void insert(int x, int y, int r, int g, int b);
+    void insert(int x, int y, int r, int g, int b, int a);
     void insert(Pixel pixel);
 };
 

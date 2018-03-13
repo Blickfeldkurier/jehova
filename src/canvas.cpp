@@ -36,9 +36,17 @@ int Canvas::init(COpts opts){
             }
         }
     }
+
+    IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG);
     TTF_Init();
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
     SDL_RenderClear(ren);
+
+    if(opts.startImagePath.empty() == false){
+           SDL_Surface * image = IMG_Load(opts.startImagePath.c_str());
+           SDL_Texture * texture = SDL_CreateTextureFromSurface(ren, image);
+           SDL_RenderCopy(ren, texture, NULL, NULL);
+    }
     SDL_RenderPresent(ren);
     return 0;
 }
@@ -50,6 +58,7 @@ Canvas::Canvas(COpts opts)
 
 void Canvas::cleanup(){
     TTF_Quit();
+    IMG_Quit();
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();
@@ -75,7 +84,7 @@ void Canvas::tick(){
     this->handleEvent();
     if(!this->pixels.empty()){
         for(auto pixel : this->pixels){
-            SDL_SetRenderDrawColor(this->ren, pixel.r, pixel.g, pixel.b, 255);
+            SDL_SetRenderDrawColor(this->ren, pixel.r, pixel.g, pixel.b, pixel.a);
             SDL_RenderDrawPoint(this->ren, pixel.x, pixel.y);
         }
     }
@@ -94,6 +103,10 @@ void Canvas::insert(Pixel pixel){
 
 void Canvas::insert(int x, int y, int r, int g, int b){
     this->insert(Pixel(x,y,r,g,b));
+}
+
+void Canvas::insert(int x, int y, int r, int g, int b, int a){
+    this->insert(Pixel(x,y,r,g,b,a));
 }
 
 void Canvas::markStart(){

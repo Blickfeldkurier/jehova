@@ -10,12 +10,14 @@ void printHelp(){
     std::cout <<
         "Usage: jehova [Options]\n\n" <<
         "Options:\n"
-        "\t--borderless-window/-b\tRun in Borderles Window Mode\n" <<
-        "\t--fullscreen/-f\tRun in Fullscreen\n" <<
-        "\t--help/-h\tShow this help\n" <<
-        "\t--height/-y\tSet Window height\n" <<
-        "\t--port/-p\tSet Listen Port\n" <<
-        "\t--width/-x\tSet Window width\n";
+        "\t--borderless-window, -b\t\tRun in Borderles Window Mode (Default: false)\n" <<
+        "\t--fullscreen, -f\t\tRun in Fullscreen (Default: false)\n" <<
+        "\t--help, -h\t\tShow this help\n" <<
+        "\t--height/-y\t\tSet Window height\n\t\t\t(Default: 768 for Windowed, nvative for Fullscreen)\n" <<
+        "\t--port, -p\t\tSet Listen Port (Default: 2342)\n" <<
+        "\t--start-image, -s\t\tPath to start Image Path (Default: empty)\n" <<
+        "\t--title, -t\t\tSet Window title and OSD Text\n" <<
+        "\t--width, -x\t\tSet Window width\n\t\t\t(Default: 1024 for Windowed, native for Fullscreen)\n";
     exit(0);
 }
 
@@ -30,19 +32,21 @@ int main(int argc, char*argv[]){
     opts.title = "Jehova - An Pixelflut Server";
     opts.screenHeight = 0;
     opts.screenWidth = 0;
+    opts.startImagePath = "";
 
     static struct option long_options[] ={
         {"help", no_argument, nullptr, 'h'},
         {"borderless-window", no_argument, nullptr, 'b'},
         {"fullscreen", no_argument, nullptr, 'f'},
         {"port", required_argument, nullptr, 'p'},
+        {"start-image", required_argument, nullptr, 's'},
         {"title", required_argument, nullptr, 't'},
         {"width", required_argument, nullptr, 'x'},
         {"height", required_argument, nullptr, 'y'},
         {0,0, 0, 0}
     };
 
-    while((opt = getopt_long(argc, argv, "bfhp:t:x:y:", long_options, &option_index)) != -1){
+    while((opt = getopt_long(argc, argv, "bfhp:s:t:x:y:", long_options, &option_index)) != -1){
       switch(opt){
         case 'b':{
             opts.screenOpts = opts.screenOpts || SDL_WINDOW_BORDERLESS;
@@ -56,6 +60,9 @@ int main(int argc, char*argv[]){
         }break;
         case 'p':{
             opts.port = std::string(optarg);
+        }break;
+        case 's':{
+            opts.startImagePath = std::string(optarg);
         }break;
         case 't':{
            opts.title = std::string(optarg);
