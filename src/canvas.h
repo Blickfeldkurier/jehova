@@ -33,6 +33,15 @@ public:
     int b;
 };
 
+class COpts{
+public:
+    int screenWidth;
+    int screenHeight;
+    Uint32 screenOpts;
+    std::string title;
+    std::string port;
+};
+
 class Canvas
 {
 private:
@@ -45,13 +54,13 @@ private:
    SDL_Renderer *ren;
    std::list<Pixel> pixels;
 
-   int init(int screenWidth, int screenHeight, Uint32 fullscreenOpts);
+   int init(COpts opts);
    void cleanup();
    void handleEvent();
    bool quitHappend;
 
 public:
-    Canvas(int screenWidth, int screenHeight, Uint32 fullscreenOpts);
+    Canvas(COpts opts);
     ~Canvas();
     void markStart();
     void tick();

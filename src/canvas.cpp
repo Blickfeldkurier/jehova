@@ -1,12 +1,12 @@
 #include "canvas.h"
 
-int Canvas::init(int screenWidth, int screenHeight, Uint32 fullscreenOpts){
+int Canvas::init(COpts opts){
     this->win = nullptr;
     this->ren = nullptr;
     this->quitHappend = false;
 
-    int localX = screenWidth;
-    int localY = screenHeight;
+    int localX = opts.screenWidth;
+    int localY = opts.screenHeight;
 
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
         std::cout << "SDL could not initialize! SDL_Error:\n\t" << SDL_GetError() << std::endl;
@@ -22,7 +22,7 @@ int Canvas::init(int screenWidth, int screenHeight, Uint32 fullscreenOpts){
             }
         }
 
-        win = SDL_CreateWindow("Jehova - Pixelflut Server", localX, localY, screenWidth, screenHeight, fullscreenOpts);
+        win = SDL_CreateWindow(opts.title.c_str(), 100, 100, localX, localY, opts.screenOpts);
         if( win == nullptr ){
             std::cout << "Window could not Created:\n\t" << SDL_GetError() << std::endl;
             return -1;
@@ -43,9 +43,9 @@ int Canvas::init(int screenWidth, int screenHeight, Uint32 fullscreenOpts){
     return 0;
 }
 
-Canvas::Canvas(int screenWidth, int screenHeight,Uint32 fullscreenOpts)
+Canvas::Canvas(COpts opts)
 {
-    this->init(screenWidth, screenHeight, fullscreenOpts);
+    this->init(opts);
 }
 
 void Canvas::cleanup(){
