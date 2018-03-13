@@ -1,15 +1,28 @@
 #include "canvas.h"
 
-int Canvas::init(){
+int Canvas::init(int screenWidth, int screenHeight, Uint32 fullscreenOpts){
     this->win = nullptr;
     this->ren = nullptr;
     this->quitHappend = false;
+
+    int localX = screenWidth;
+    int localY = screenHeight;
 
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
         std::cout << "SDL could not initialize! SDL_Error:\n\t" << SDL_GetError() << std::endl;
         return -1;
     }else{
-        win = SDL_CreateWindow("Jehova - Pixelflut Server", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+        //If no resolition is given at command line, we use the native one in Fullscreen mode
+        if(localY == -1){
+            SDL_DisplayMode DM;
+            if(SDL_GetDesktopDisplayMode(0,&DM) == 0){
+                std::cout << "" << DM.w << "/" << DM.h << "\n";
+                localX = DM.w;
+                localY = DM.h;
+            }
+        }
+
+        win = SDL_CreateWindow("Jehova - Pixelflut Server", localX, localY, screenWidth, screenHeight, fullscreenOpts);
         if( win == nullptr ){
             std::cout << "Window could not Created:\n\t" << SDL_GetError() << std::endl;
             return -1;
@@ -30,9 +43,9 @@ int Canvas::init(){
     return 0;
 }
 
-Canvas::Canvas()
+Canvas::Canvas(int screenWidth, int screenHeight,Uint32 fullscreenOpts)
 {
-    this->init();
+    this->init(screenWidth, screenHeight, fullscreenOpts);
 }
 
 void Canvas::cleanup(){

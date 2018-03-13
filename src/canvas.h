@@ -45,13 +45,13 @@ private:
    SDL_Renderer *ren;
    std::list<Pixel> pixels;
 
-   int init();
+   int init(int screenWidth, int screenHeight, Uint32 fullscreenOpts);
    void cleanup();
    void handleEvent();
    bool quitHappend;
 
 public:
-    Canvas();
+    Canvas(int screenWidth, int screenHeight, Uint32 fullscreenOpts);
     ~Canvas();
     void markStart();
     void tick();
