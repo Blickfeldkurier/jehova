@@ -39,7 +39,6 @@ Network::Network(int port)
 }
 
 void Network::processMsg(std::string message, Canvas *canvas){
-    std::cout << "Debug: received: " << message << std::flush;
 
     std::vector<std::string> tokens;
     std::istringstream iss(message);
