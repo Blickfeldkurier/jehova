@@ -9,7 +9,7 @@ Yet another Pixelfut server. Might have some Features other servers lack.
  * SDL Image
  * CMake
  * Some C++ Compiler
- 
+
  For Mint do something like this to install all build requirements:
  ```
  apt install libsdl2-dev libsdl-ttf2.0-dev libsdl2-image-dev cmake build-essential g++
@@ -29,6 +29,8 @@ make
 
 If you run the server without any options it will open a Window with a Resolution of 1024x768 and listen to port 2342.
 
+* --avahi / -a : Advertise Pixelflut via Avahi
+* --avmsg, -m <string\>	: Specify Message for Avahi(Sets also -a)
 * --port / -p <number\> :  Set the port the server will listen to.
 * --fullscreen / -f : Run in Fullscreen mode. If --width and hight are given defaults to the native display resolution.
 * --height / -y <height\> :  Set display height. Defaults to 768 in windowed mode and to the native resolution in fullscreen mode.

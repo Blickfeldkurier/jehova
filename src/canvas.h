@@ -5,6 +5,8 @@
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 
+#include "copts.h"
+
 #include <iostream>
 #include <list>
 #include <chrono>
@@ -35,18 +37,6 @@ public:
     int g;
     int b;
     int a;
-};
-
-class COpts{
-public:
-    int screenWidth;
-    int screenHeight;
-    Uint32 screenOpts;
-    std::string title;
-    std::string port;
-    std::string startImagePath;
-    std::string screenPath;
-    int screenInterval;
 };
 
 class Canvas

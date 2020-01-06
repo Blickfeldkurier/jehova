@@ -5,11 +5,14 @@
 #include "SDL.h"
 #include "canvas.h"
 #include "network.h"
+#include "avahiservice.h"
 
 void printHelp(){
     std::cout <<
         "Usage: jehova [Options]\n\n" <<
         "Options:\n"
+        "\t--avahi, -a\t\tAdvertise Pixelflut via Avahi\n" <<
+        "\t--avmsg, -m\t\tSpecify Message for Avahi(Sets also -a)\n"
         "\t--borderless-window, -b\t\tRun in Borderles Window Mode (Default: false)\n" <<
         "\t--fullscreen, -f\t\tRun in Fullscreen (Default: false)\n" <<
         "\t--help, -h\t\tShow this help\n" <<
@@ -27,6 +30,8 @@ int main(int argc, char*argv[]){
     int opt;
     int option_index = 0;
     bool isFullscreen = false;
+    bool hazAvahi = false;
+    std::string avahiMsg = "";
 
     COpts opts = {};
     opts.screenOpts = 0;
@@ -39,6 +44,8 @@ int main(int argc, char*argv[]){
     opts.screenPath = "";
 
     static struct option long_options[] ={
+        {"avahi", no_argument, nullptr, 'a'},
+        {"avmsg", required_argument, nullptr, 'm'},
         {"help", no_argument, nullptr, 'h'},
         {"save-path", required_argument, nullptr, 'c'},
         {"save-interval", required_argument, nullptr, 'd'},
@@ -52,8 +59,11 @@ int main(int argc, char*argv[]){
         {0,0, 0, 0}
     };
 
-    while((opt = getopt_long(argc, argv, "bc:d:fhp:s:t:x:y:", long_options, &option_index)) != -1){
+    while((opt = getopt_long(argc, argv, "abc:d:fhm:p:s:t:x:y:", long_options, &option_index)) != -1){
       switch(opt){
+        case 'a':{
+            hazAvahi = true;
+        }break;
         case 'b':{
             opts.screenOpts = opts.screenOpts || SDL_WINDOW_BORDERLESS;
         }break;
@@ -69,6 +79,10 @@ int main(int argc, char*argv[]){
         }break;
         case 'h':{
             printHelp();
+        }break;
+        case 'm':{
+            avahiMsg = std::string(optarg);
+            hazAvahi = true;
         }break;
         case 'p':{
             opts.port = std::string(optarg);
@@ -100,7 +114,10 @@ int main(int argc, char*argv[]){
     if(isFullscreen == true &&  (opts.screenHeight == 0 && opts.screenWidth == 0)){
         opts.screenHeight = -1;
     }
-
+    AvahiService *avahi = nullptr;
+    if(hazAvahi == true){
+        avahi = new AvahiService(opts, avahiMsg);
+    }
     Canvas *canvas = new Canvas(opts);
     Network *network = new Network(atoi(opts.port.c_str()));
 
@@ -111,5 +128,8 @@ int main(int argc, char*argv[]){
     }
 
     delete canvas;
+    if(avahi != nullptr){
+        delete avahi;
+    }
     return 0;
 }
