@@ -22,7 +22,7 @@ In the Project root directory do:
 mkdir build;
 cd build;
 cmake ../;
-make
+make package
 ```
 
 ## Run / Options
