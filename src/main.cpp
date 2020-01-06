@@ -12,7 +12,7 @@ void printHelp(){
         "Usage: jehova [Options]\n\n" <<
         "Options:\n"
         "\t--avahi, -a\t\tAdvertise Pixelflut via Avahi\n" <<
-        "\t--avmsg, -m\t\tSpecify Message for Avahi(Sets also -a)\n"
+        "\t--avmsg, -m\t\tSpecify Message for Avahi(Sets also -a)\n" <<
         "\t--borderless-window, -b\t\tRun in Borderles Window Mode (Default: false)\n" <<
         "\t--fullscreen, -f\t\tRun in Fullscreen (Default: false)\n" <<
         "\t--help, -h\t\tShow this help\n" <<
